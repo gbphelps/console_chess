@@ -9,7 +9,7 @@ require_relative 'pieces'
 
 class Game
 
-  attr_accessor :board, :cursor, :display, :players, :last_move
+  attr_accessor :board, :cursor, :display, :players, :history
 
   def initialize(board, cursor, display, player_one, player_two)
     board.setup
@@ -17,7 +17,7 @@ class Game
     @cursor = cursor
     @display = display
     @players = [player_one, player_two]
-    @last_move = [0, 4]
+    @history = [[nil, [0,4]]]
   end
 
   def play
@@ -46,9 +46,12 @@ class Game
 
     board.move_piece(first_pos, second_pos)
     display.render(current_player.color)
-    cursor.cursor_pos = last_move
-    self.last_move = second_pos
+    p "cursor before #{cursor.cursor_pos}"
+    cursor.cursor_pos = history.last.last
+    p "cursor after #{cursor.cursor_pos}"
+    self.history << [first_pos, second_pos]
     players.rotate!
+    p history
     puts "#{current_player.name}, press enter when ready."
     gets
     cursor.invert
