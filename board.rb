@@ -48,8 +48,9 @@ class Board
 
     #promotion
     if moving_piece.is_a?(Pawn) &&
-      end_pos[1] == (moving_piece.color == :black ? 7 : 0)
+      end_pos[0] == (moving_piece.color == :black ? 7 : 0)
       puts 'Promotion time!'
+      gets
     end
 
     moving_piece.position = end_pos
