@@ -10,6 +10,7 @@ class Board
   8.times { |row| 8.times { |col| ALL_POSITIONS << [row, col] } }
 
   attr_reader :grid, :history
+  attr_accessor :players
 
   def initialize
     @grid = Array.new(8) { Array.new(8) }
@@ -46,18 +47,31 @@ class Board
         self[[start_pos[0], end_pos[1]]] = NullP.instance
     end
 
-    #promotion
-    if moving_piece.is_a?(Pawn) &&
-      end_pos[0] == (moving_piece.color == :black ? 7 : 0)
-      puts 'Promotion time!'
-      gets
-    end
-
     moving_piece.position = end_pos
     moving_piece.moved = true
     self[end_pos] = moving_piece
     self[start_pos] = NullP.instance
+
+    #promotion
+    if moving_piece.is_a?(Pawn) &&
+      end_pos[0] == (moving_piece.color == :black ? 7 : 0)
+      puts 'Promotion time!'
+      promote(end_pos)
+    end
   end
+
+
+  def promote(pos)
+    puts "#{players[0].name}, choose a piece to replace your pawn."
+    puts "You may type `Queen`, `Rook`, `Knight`, or `Bishop`"
+    piece_name = gets.chomp
+    p self[pos]
+    p players[0].color
+    self[pos] = Kernel.const_get(piece_name).new(players[0].color, pos, self)
+  end
+
+
+
 
   def move_piece!(start_pos, end_pos)
     validate!(start_pos, end_pos)
@@ -151,6 +165,7 @@ class Board
     self[[0, 5]] = Bishop.new(:black, [0, 5], self)
     #black queen
     self[[0, 3]] = Queen.new(:black, [0, 3], self)
+
     #black king
     self[[0, 4]] = King.new(:black, [0, 4], self)
 

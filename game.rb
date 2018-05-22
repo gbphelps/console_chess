@@ -13,10 +13,11 @@ class Game
 
   def initialize(board, cursor, display, player_one, player_two)
     board.setup
-    @board = board
     @cursor = cursor
     @display = display
     @players = [player_one, player_two]
+    @board = board
+    @board.players = players
   end
 
   def play
