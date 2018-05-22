@@ -33,9 +33,17 @@ class Board
     return nil unless self[start_pos].valid_moves.include?(end_pos)
     moving_piece = self[start_pos]
 
+    #castling logic
     if moving_piece.is_a?(King) && (start_pos[1] - end_pos[1]).abs > 1
       col = (end_pos[1] == 6 ? [7,5] : [0,2])
       move_piece([start_pos[0],col.first],[start_pos[0],col.last])
+    end
+
+    #en passant logic
+    if moving_piece.is_a?(Pawn) &&
+      start_pos[1] - end_pos[1] != 0 &&
+      self[end_pos] == NullP.instance
+        self[[start_pos[0], end_pos[1]]] = NullP.instance
     end
 
     moving_piece.position = end_pos
