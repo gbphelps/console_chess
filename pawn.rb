@@ -28,7 +28,7 @@ class Pawn < Piece
 
     if Board.valid_pos?(one_step) && board[one_step] == NullP.instance
       move_list << one_step
-      move_list << two_step if board[two_step] == NullP.instance && !moved
+      move_list << two_step if Board.valid_pos?(two_step) && board[two_step] == NullP.instance && !moved
     end
 
     move_list
@@ -63,6 +63,5 @@ class Pawn < Piece
     end
     return en_passants
   end
-
 
 end

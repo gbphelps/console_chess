@@ -46,6 +46,12 @@ class Board
         self[[start_pos[0], end_pos[1]]] = NullP.instance
     end
 
+    #promotion
+    if moving_piece.is_a?(Pawn) &&
+      end_pos[1] == (moving_piece.color == :black ? 7 : 0)
+      puts 'Promotion time!'
+    end
+
     moving_piece.position = end_pos
     moving_piece.moved = true
     self[end_pos] = moving_piece
