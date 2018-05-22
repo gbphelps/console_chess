@@ -9,10 +9,11 @@ class Board
   ALL_POSITIONS = []
   8.times { |row| 8.times { |col| ALL_POSITIONS << [row, col] } }
 
-  attr_reader :grid
+  attr_reader :grid, :history
 
   def initialize
     @grid = Array.new(8) { Array.new(8) }
+    @history = [[nil, [0,4]]]
     # setup
   end
 

@@ -17,7 +17,6 @@ class Game
     @cursor = cursor
     @display = display
     @players = [player_one, player_two]
-    @history = [[nil, [0,4]]]
   end
 
   def play
@@ -46,12 +45,9 @@ class Game
 
     board.move_piece(first_pos, second_pos)
     display.render(current_player.color)
-    p "cursor before #{cursor.cursor_pos}"
-    cursor.cursor_pos = history.last.last
-    p "cursor after #{cursor.cursor_pos}"
-    self.history << [first_pos, second_pos]
+    cursor.cursor_pos = board.history.last.last
+    board.history << [first_pos, second_pos]
     players.rotate!
-    p history
     puts "#{current_player.name}, press enter when ready."
     gets
     cursor.invert
