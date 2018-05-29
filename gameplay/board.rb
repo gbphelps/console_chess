@@ -15,7 +15,6 @@ class Board
   def initialize
     @grid = Array.new(8) { Array.new(8) }
     @history = [[nil, [0,4]]]
-    # setup
   end
 
   def []=(pos,piece)
@@ -34,31 +33,40 @@ class Board
     return nil unless self[start_pos].valid_moves.include?(end_pos)
     moving_piece = self[start_pos]
 
-    #castling logic
-    if moving_piece.is_a?(King) && (start_pos[1] - end_pos[1]).abs > 1
-      col = (end_pos[1] == 6 ? [7,5] : [0,2])
-      move_piece([start_pos[0],col.first],[start_pos[0],col.last])
-    end
+    castle(start_pos, end_pos, moving_piece)
+    en_passant(start_pos, end_pos, moving_piece)
 
-    #en passant logic
-    if moving_piece.is_a?(Pawn) &&
-      start_pos[1] - end_pos[1] != 0 &&
-      self[end_pos] == NullP.instance
-        self[[start_pos[0], end_pos[1]]] = NullP.instance
-    end
 
     moving_piece.position = end_pos
     moving_piece.moved = true
     self[end_pos] = moving_piece
     self[start_pos] = NullP.instance
 
-    #promotion
+    promotion(start_pos,end_pos,moving_piece)
+
+  end
+
+  def castle(start_pos, end_pos, moving_piece)
+    if moving_piece.is_a?(King) && (start_pos[1] - end_pos[1]).abs > 1
+      col = (end_pos[1] == 6 ? [7,5] : [0,2])
+      move_piece([start_pos[0],col.first],[start_pos[0],col.last])
+    end
+  end
+
+  def en_passant(start_pos, end_pos, moving_piece)
+    if moving_piece.is_a?(Pawn) &&
+      start_pos[1] - end_pos[1] != 0 &&
+      self[end_pos] == NullP.instance
+        self[[start_pos[0], end_pos[1]]] = NullP.instance
+    end
+  end
+
+  def promotion(start_pos, end_pos, moving_piece)
     if moving_piece.is_a?(Pawn) &&
       end_pos[0] == (moving_piece.color == :black ? 7 : 0)
       promote(end_pos)
     end
   end
-
 
   def promote(pos)
     puts "#{players[0].name}, choose a piece to replace your pawn."
@@ -130,42 +138,31 @@ class Board
   end
 
 
-  # private
-
   def setup
-    #null pieces
+    #Initialize null
     (2..5).each { |row| (0..7).each { |col| grid[row][col] = NullP.instance } }
-    #white pawns
+
+    #Initialize White
     8.times { |col| self[[6, col]] = Pawn.new(:light_white, [6, col], self) }
-    #white rooks
     self[[7, 0]] = Rook.new(:light_white, [7, 0], self)
     self[[7, 7]] = Rook.new(:light_white, [7, 7], self)
-    #white knights
     self[[7, 1]] = Knight.new(:light_white, [7, 1], self)
     self[[7, 6]] = Knight.new(:light_white, [7, 6], self)
-    #white bishops
     self[[7, 2]] = Bishop.new(:light_white, [7, 2], self)
     self[[7, 5]] = Bishop.new(:light_white, [7, 5], self)
-    #white queen
     self[[7, 3]] = Queen.new(:light_white, [7, 3], self)
-    #white king
     self[[7, 4]] = King.new(:light_white, [7, 4], self)
 
-    #black pawns
+
+    #Initialize Black
     8.times { |col| self[[1, col]] = Pawn.new(:black, [1, col], self) }
-    #black rooks
     self[[0, 0]] = Rook.new(:black, [0, 0], self)
     self[[0, 7]] = Rook.new(:black, [0, 7], self)
-    #black knights
     self[[0, 1]] = Knight.new(:black, [0, 1], self)
     self[[0, 6]] = Knight.new(:black, [0, 6], self)
-    #black bishops
     self[[0, 2]] = Bishop.new(:black, [0, 2], self)
     self[[0, 5]] = Bishop.new(:black, [0, 5], self)
-    #black queen
     self[[0, 3]] = Queen.new(:black, [0, 3], self)
-
-    #black king
     self[[0, 4]] = King.new(:black, [0, 4], self)
 
   end

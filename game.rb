@@ -1,10 +1,10 @@
-require 'byebug'
-require_relative 'human_player'
-require_relative 'display'
-require_relative 'board'
-require_relative 'cursor'
+require_relative 'gameplay/human_player'
+require_relative 'gameplay/display'
+require_relative 'gameplay/board'
+require_relative 'gameplay/cursor'
+require_relative 'gameplay/pieces'
+
 require 'colorized_string'
-require_relative 'pieces'
 
 
 class Game
@@ -41,7 +41,14 @@ class Game
       cursor.toggle_on
       selected_piece = cursor.board[first_pos]
       second_pos = make_selection until second_pos
-      break if selected_piece.valid_moves.include?(second_pos)
+      if selected_piece.valid_moves.include?(second_pos)
+        break
+      else
+        puts "Invalid selection. Verify that this move would not result in check."
+        puts "Press ENTER to continue."
+        gets
+        cursor.toggle_off
+      end
     end
 
     board.move_piece(first_pos, second_pos)
@@ -49,7 +56,7 @@ class Game
     cursor.cursor_pos = board.history.last.last
     board.history << [first_pos, second_pos]
     players.rotate!
-    puts "#{current_player.name}, press enter when ready."
+    puts "#{current_player.name}, press ENTER when ready."
     gets
     cursor.invert
   end
@@ -60,8 +67,17 @@ class Game
   end
 
   def parse_first(first_pos)
-    (first_pos && board[first_pos].color == current_player.color &&
-      !board[first_pos].valid_moves.empty?)
+    if first_pos
+      if board[first_pos].color == current_player.color &&
+         !board[first_pos].valid_moves.empty?
+         return true
+      else
+        puts "This piece has no valid moves. Verify that your king is not in check."
+        puts "Press ENTER to continue."
+        gets
+        cursor.toggle_off
+      end
+    end
   end
 
   def game_over_message

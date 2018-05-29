@@ -9,24 +9,10 @@ class Display
     @cursor = cursor
   end
 
-  # def render
-  #   system("clear")
-  #   puts
-  #   str = ""
-  #   8.times do |row|
-  #     str << "  "
-  #     8.times do |col|
-  #       str << render_square(row,col)
-  #     end
-  #     str << "\n"
-  #   end
-  #   puts str
-  #   puts
-  # end
-  
+
   def render(color)
     range = (color == :light_white ? (0..7) : (0..7).to_a.reverse)
-    
+
     system("clear")
     puts
     str = ""
@@ -40,16 +26,16 @@ class Display
     puts str
     puts
   end
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
 
   def render_square(row,col)
     piece = board[[row,col]]
@@ -70,4 +56,3 @@ class Display
   end
 
 end
-
